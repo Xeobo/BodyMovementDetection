@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/columnX"
+        android:text="X"
+        android:textColor="#000"
+        android:textAlignment="center"
+        android:layout_weight="0.25"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/columnY"
+        android:text="Y"
+        android:textAlignment="center"
+        android:textColor="#000"
+        android:layout_weight="0.25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/columnZ"
+        android:text="Z"
+        android:textAlignment="center"
+        android:textColor="#000"
+        android:layout_weight="0.25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/label"
+        android:textColor="#000"
+        android:textAlignment="center"
+        android:layout_weight="0.25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="L" />
+
+</LinearLayout>
