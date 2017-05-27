@@ -5,8 +5,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
+import com.vzbiljic.bodymovementdetection.MongoDBUtils;
 import com.vzbiljic.bodymovementdetection.R;
 import com.vzbiljic.bodymovementdetection.fragment.CreateDataFragment;
 import com.vzbiljic.bodymovementdetection.fragment.ListDataFragment;
@@ -16,8 +16,8 @@ public class ColectDataActivity extends StartFragmentActivity{
 
     @Override
     protected void onDestroy() {
+        MongoDBUtils.deinit();
         super.onDestroy();
-
     }
 
     @Override
@@ -42,10 +42,10 @@ public class ColectDataActivity extends StartFragmentActivity{
 
         switch (item.getItemId()){
             case 1://start stop
-                atachFragment(new CreateDataFragment());
+                attachFragment(new CreateDataFragment());
                 break;
             case 2:
-                atachFragment(new ListDataFragment());
+                attachFragment(new ListDataFragment());
                 break;
         }
 
@@ -54,4 +54,5 @@ public class ColectDataActivity extends StartFragmentActivity{
 
         return true;
     }
+
 }

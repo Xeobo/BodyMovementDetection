@@ -14,10 +14,7 @@ import com.vzbiljic.bodymovementdetection.R;
 
 public abstract class StartFragmentActivity extends StartActivity {
 
-    protected void atachFragment(Fragment fragment){
-
-
-
+    protected void attachFragment(Fragment fragment){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         // Replace whatever is in the fragment_container view with this fragment,

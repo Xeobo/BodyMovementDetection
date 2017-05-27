@@ -109,7 +109,7 @@ public class CreateDataFragment extends AbstractFragment implements ServiceConne
 
                             public void onClick(DialogInterface arg0, int arg1) {
 
-                                AxisDiffereceData.deleteAll(AxisDiffereceData.class);
+                                AxisDiffereceData.deleteAllData();
                             }
                         }).create();
 

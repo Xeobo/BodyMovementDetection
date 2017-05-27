@@ -1,5 +1,10 @@
 package com.vzbiljic.bodymovementdetection;
 
+import android.util.Log;
+
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoDatabase;
 import com.orm.SugarRecord;
 
 /**
@@ -12,6 +17,10 @@ public class AxisDiffereceData extends SugarRecord {
     private float z;
     private int label = Label.STANDING;
 
+    private void logToMongo() {
+        Log.i("AxisDiffereceData","Logged to mongo");
+        MongoDBUtils.getInstance().logToDB(this);
+    }
     public AxisDiffereceData(){}
 
     public AxisDiffereceData(float x, float y, float z) {
@@ -27,10 +36,11 @@ public class AxisDiffereceData extends SugarRecord {
         this.label = label;
     }
 
+
+
     public float getX() {
         return x;
     }
-
 
     public void setX(float x) {
         this.x = x;
@@ -69,6 +79,18 @@ public class AxisDiffereceData extends SugarRecord {
                 ", label=" + label +
                 '}';
     }
+
+    @Override
+    public long save() {
+        logToMongo();
+        return super.save();
+    }
+
+    public static void deleteAllData(){
+        SugarRecord.deleteAll(AxisDiffereceData.class);
+        MongoDBUtils.getInstance().deleteAll();
+    }
+
 
     public static class Label{
         public static final  int STANDING = 0;
