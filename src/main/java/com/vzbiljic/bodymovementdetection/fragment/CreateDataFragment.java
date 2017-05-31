@@ -65,16 +65,20 @@ public class CreateDataFragment extends AbstractFragment implements ServiceConne
                             service.setStatus(state);
                             service.start();
                             Button delbt = (Button) root.findViewById(R.id.delete_data_base);
+                            Button syncBtn = (Button) root.findViewById(R.id.sync_data_base);
                             delbt.setEnabled(false);
+                            syncBtn.setEnabled(false);
                             button.setText("Zaustavi");
                         }
                     } else {
-                        if (null != service) {
-                            if(service.pause()) {
-                                Button delbt = (Button) root.findViewById(R.id.delete_data_base);
-                                delbt.setEnabled(true);
-                                button.setText("Pokreni");
-                            }
+                        if (null != service && service.pause()) {
+
+                            Button delbt = (Button) root.findViewById(R.id.delete_data_base);
+                            Button syncBtn = (Button) root.findViewById(R.id.sync_data_base);
+                            delbt.setEnabled(true);
+                            syncBtn.setEnabled(true);
+                            button.setText("Pokreni");
+
                         }
                     }
                 }catch (RemoteException r){
@@ -125,6 +129,15 @@ public class CreateDataFragment extends AbstractFragment implements ServiceConne
             }
         });
 
+
+        Button syncBtn = (Button) root.findViewById(R.id.sync_data_base);
+
+        syncBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AxisDiffereceData.syncRemoteDatabase();
+            }
+        });
         Log.i(TAG,"Fragment created");
 
         return root;

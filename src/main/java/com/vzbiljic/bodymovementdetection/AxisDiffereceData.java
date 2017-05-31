@@ -7,6 +7,8 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
 import com.orm.SugarRecord;
 
+import java.util.List;
+
 /**
  * Created by vzbiljic on 10.4.17..
  */
@@ -16,6 +18,9 @@ public class AxisDiffereceData extends SugarRecord {
     private float y;
     private float z;
     private int label = Label.STANDING;
+
+    private static long lastLoggedId = 0;
+
 
     private void logToMongo() {
         Log.i("AxisDiffereceData","Logged to mongo");
@@ -35,8 +40,6 @@ public class AxisDiffereceData extends SugarRecord {
         this.z = z;
         this.label = label;
     }
-
-
 
     public float getX() {
         return x;
@@ -82,16 +85,31 @@ public class AxisDiffereceData extends SugarRecord {
 
     @Override
     public long save() {
-        logToMongo();
         return super.save();
     }
 
     public static void deleteAllData(){
         SugarRecord.deleteAll(AxisDiffereceData.class);
-        MongoDBUtils.getInstance().deleteAll();
+        lastLoggedId = -1;
     }
 
+    public static void syncRemoteDatabase(){
+        //detect taht delete was called
+        if(0 > lastLoggedId ){
+            MongoDBUtils.getInstance().deleteAll();
+            lastLoggedId = 0;
+        }
 
+        List<AxisDiffereceData> list = AxisDiffereceData.
+                getEntitiesFromCursor(
+                        SugarRecord.getCursor(AxisDiffereceData.class," id > " + lastLoggedId + " ",null,null,null,null)
+                        ,AxisDiffereceData.class);
+        Log.i("AxisDifferenceData", "list size" + list.size());
+        for (AxisDiffereceData axe: list) {
+            axe.logToMongo();
+            lastLoggedId = axe.getId();
+        }
+    }
     public static class Label{
         public static final  int STANDING = 0;
         public static final  int WALKING = 1;

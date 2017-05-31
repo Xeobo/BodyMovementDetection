@@ -74,7 +74,9 @@ public class DatabaseUpdaterService extends Service implements Runnable,SensorEv
             mutex.release();
 
 
-            new AxisDiffereceData(localXCurrent - xLast, localYCurrent - yLast, localZCurrent - zLast,State.intValue(state)).save();
+            long possibleId = new AxisDiffereceData(localXCurrent - xLast, localYCurrent - yLast, localZCurrent - zLast,State.intValue(state)).save();
+
+            Log.i("AxisDiffereceData", "PosibleID: "+ possibleId);
 
 
             xLast = localXCurrent;
