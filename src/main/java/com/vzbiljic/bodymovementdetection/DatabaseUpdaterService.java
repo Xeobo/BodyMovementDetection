@@ -1,6 +1,7 @@
 package com.vzbiljic.bodymovementdetection;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -9,8 +10,10 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Condition;
@@ -22,7 +25,7 @@ import java.util.concurrent.locks.Condition;
 public class DatabaseUpdaterService extends Service implements Runnable,SensorEventListener{
 
     private static final String TAG = "DatabaseUpdaterService";
-    private static final long SAMPLE_PERIOD = 200;
+    private static final long SAMPLE_PERIOD = 100;
 
     public static String STATE_ARGUMENT = "STATE_ARGUMENT";
 
@@ -40,6 +43,8 @@ public class DatabaseUpdaterService extends Service implements Runnable,SensorEv
 
     private IDatabaseUpdateService connection;
     private boolean registered = false;
+    private boolean restarted = true;
+    private boolean isFirst = true;
 
 
     @Override
@@ -73,16 +78,17 @@ public class DatabaseUpdaterService extends Service implements Runnable,SensorEv
 
             mutex.release();
 
+            if(!restarted) {
+                long possibleId = new AxisDiffereceData(localXCurrent - xLast, localYCurrent - yLast, localZCurrent - zLast, State.intValue(state)).save();
 
-            long possibleId = new AxisDiffereceData(localXCurrent - xLast, localYCurrent - yLast, localZCurrent - zLast,State.intValue(state)).save();
-
-            Log.i("AxisDiffereceData", "PosibleID: "+ possibleId);
-
+                Log.i("AxisDiffereceData", "PosibleID: " + possibleId);
+            }
 
             xLast = localXCurrent;
             yLast = localYCurrent;
             zLast = localZCurrent;
 
+            restarted = false;
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -122,8 +128,22 @@ public class DatabaseUpdaterService extends Service implements Runnable,SensorEv
 
     @Override
     public void run() {
+        boolean lastActiveState = false;
         while (!stopThread) {
             try {
+                //when starting
+                if(restarted){
+                    isActive = true;
+                    for (int i=0; i<3; i++){
+                        Handler handler = new Handler(Looper.getMainLooper());
+
+                        handler.post(new ToastRunnable(getApplicationContext(),"" + ( 3 - i)));
+
+                        Thread.sleep(2000);
+                    }
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new ToastRunnable(getApplicationContext(),"GOOOOO!"));
+                }
                 Thread.sleep(SAMPLE_PERIOD);
 
                 if(isActive)
@@ -185,8 +205,7 @@ public class DatabaseUpdaterService extends Service implements Runnable,SensorEv
                     manager.registerListener(DatabaseUpdaterService.this,mySensor, SensorManager.SENSOR_DELAY_NORMAL);
                     registered = true;
                 }
-
-                isActive = true;
+                restarted = true;
             }
         }
 
@@ -217,5 +236,20 @@ public class DatabaseUpdaterService extends Service implements Runnable,SensorEv
         }
     }
 
+    private class ToastRunnable implements Runnable {
 
+        final String string;
+        final Context mContext;
+        public ToastRunnable(Context c, String text) {
+            string = text;
+            mContext = c;
+        }
+
+        @Override
+        public void run() {
+            Toast.makeText(mContext,
+                    string,
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
 }
