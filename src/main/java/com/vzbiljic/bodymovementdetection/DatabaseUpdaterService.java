@@ -25,7 +25,6 @@ import java.util.concurrent.locks.Condition;
 public class DatabaseUpdaterService extends Service implements Runnable,SensorEventListener{
 
     private static final String TAG = "DatabaseUpdaterService";
-    private static final long SAMPLE_PERIOD = 100;
 
     public static String STATE_ARGUMENT = "STATE_ARGUMENT";
 
@@ -45,6 +44,7 @@ public class DatabaseUpdaterService extends Service implements Runnable,SensorEv
     private boolean registered = false;
     private boolean restarted = true;
     private boolean isFirst = true;
+    private int samplePeriod;
 
 
     @Override
@@ -79,7 +79,7 @@ public class DatabaseUpdaterService extends Service implements Runnable,SensorEv
             mutex.release();
 
             if(!restarted) {
-                long possibleId = new AxisDiffereceData(localXCurrent - xLast, localYCurrent - yLast, localZCurrent - zLast, State.intValue(state)).save();
+                long possibleId = new AxisDiffereceData(localXCurrent - xLast, localYCurrent - yLast, localZCurrent - zLast,State.intValue(state),samplePeriod).save();
 
                 Log.i("AxisDiffereceData", "PosibleID: " + possibleId);
             }
@@ -144,7 +144,7 @@ public class DatabaseUpdaterService extends Service implements Runnable,SensorEv
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new ToastRunnable(getApplicationContext(),"GOOOOO!"));
                 }
-                Thread.sleep(SAMPLE_PERIOD);
+                Thread.sleep(samplePeriod);
 
                 if(isActive)
                     logToDB();
@@ -233,6 +233,9 @@ public class DatabaseUpdaterService extends Service implements Runnable,SensorEv
         @Override
         public void setStatus(int status) throws RemoteException {
             state = State.getFromInt(status);
+        }
+        public void setSampleRate(int period){
+            samplePeriod = period;
         }
     }
 

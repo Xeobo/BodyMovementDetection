@@ -14,4 +14,6 @@ interface IDatabaseUpdateService {
     boolean pause();
 
     void setStatus(int status);
+
+    void setSampleRate(int period);
 }

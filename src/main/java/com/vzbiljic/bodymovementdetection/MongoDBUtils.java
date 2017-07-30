@@ -45,6 +45,7 @@ public class MongoDBUtils {
                             .append("y", data.getY())
                             .append("z", data.getZ())
                             .append("label", data.getLabel())
+                            .append("sample_period", data.getSamplePeriod())
                     );
                 } catch (Throwable t) {
                     Log.i("MongoDBUtils", "Not able to insert data");

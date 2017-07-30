@@ -1,10 +1,7 @@
 package com.vzbiljic.bodymovementdetection.fragment;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Looper;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -77,6 +74,7 @@ public class ListDataFragment extends Fragment {
             TextView yView = (TextView) convertView.findViewById(R.id.columnY);
             TextView zView = (TextView) convertView.findViewById(R.id.columnZ);
             TextView labelView = (TextView) convertView.findViewById(R.id.label);
+            TextView spView = (TextView) convertView.findViewById(R.id.sample_period);
 
 
 
@@ -84,6 +82,7 @@ public class ListDataFragment extends Fragment {
             yView.setText(datas.get(position).getY() + "");
             zView.setText(datas.get(position).getZ() + "");
             labelView.setText(datas.get(position).getLabel() + "");
+            spView.setText(datas.get(position).getSamplePeriod() + "");
 
             Log.i("HiThere","position: " + position);
 

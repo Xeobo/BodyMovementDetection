@@ -13,9 +13,10 @@
         android:theme="@style/AppTheme">
 
         <!--<meta-data android:name="DATABASE" android:value="accelerometer-database.db" /> //database name-->
-        <!--<meta-data android:name="VERSION" android:value="2" />-->
         <!--<meta-data android:name="QUERY_LOG" android:value="true" />-->
+
         <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="com.vzbiljic.bodymovementdetection" />
+        <meta-data android:name="VERSION" android:value="2" />
 
 
         <activity android:name=".activities.ColectDataActivity"

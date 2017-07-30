@@ -18,14 +18,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.vzbiljic.bodymovementdetection.AxisDiffereceData;
 import com.vzbiljic.bodymovementdetection.DatabaseUpdaterService;
 import com.vzbiljic.bodymovementdetection.IDatabaseUpdateService;
 import com.vzbiljic.bodymovementdetection.R;
-import com.vzbiljic.bodymovementdetection.activities.StartActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -62,10 +61,15 @@ public class CreateDataFragment extends AbstractFragment implements ServiceConne
                 try {
                     if (collectData) {
                         if (null != service) {
+                            EditText edit = (EditText) root.findViewById(R.id.sample_rate_edit);
+
                             service.setStatus(state);
+                            service.setSampleRate(Integer.parseInt(edit.getText().toString()));
                             service.start();
                             Button delbt = (Button) root.findViewById(R.id.delete_data_base);
                             Button syncBtn = (Button) root.findViewById(R.id.sync_data_base);
+
+                            edit.setEnabled(false);
                             delbt.setEnabled(false);
                             syncBtn.setEnabled(false);
                             button.setText("Zaustavi");
@@ -75,6 +79,9 @@ public class CreateDataFragment extends AbstractFragment implements ServiceConne
 
                             Button delbt = (Button) root.findViewById(R.id.delete_data_base);
                             Button syncBtn = (Button) root.findViewById(R.id.sync_data_base);
+                            EditText edit = (EditText) root.findViewById(R.id.sample_rate_edit);
+
+                            edit.setEnabled(true);
                             delbt.setEnabled(true);
                             syncBtn.setEnabled(true);
                             button.setText("Pokreni");
@@ -140,6 +147,36 @@ public class CreateDataFragment extends AbstractFragment implements ServiceConne
         });
         Log.i(TAG,"Fragment created");
 
+
+        Button deleteRemoteBtn = (Button) root.findViewById(R.id.delete_remote_database);
+        deleteRemoteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                        .setTitle("Brisanje")
+                        .setMessage("Da li ste sigurni da želite da obrisete sve podatke sa udaljene baze?")
+                        .setNegativeButton(android.R.string.no, null)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface arg0, int arg1) {
+
+                                AxisDiffereceData.deleteAllRemoteData();
+                            }
+                        }).create();
+
+                dialog.show();
+
+                Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                button.setTextColor(Color.BLUE);
+                button.setText("DA");
+
+                button = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+                button.setTextColor(Color.BLUE);
+                button.setText("NE");
+            }
+        });
+
+
         return root;
 
     }
@@ -164,9 +201,6 @@ public class CreateDataFragment extends AbstractFragment implements ServiceConne
 
                 collectData = true;
                 bt.setText("Zaustavi");
-
-
-
 
             }
         } catch (RemoteException e) {

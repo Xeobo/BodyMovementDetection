@@ -2,9 +2,6 @@ package com.vzbiljic.bodymovementdetection;
 
 import android.util.Log;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.client.MongoDatabase;
 import com.orm.SugarRecord;
 
 import java.util.List;
@@ -18,27 +15,23 @@ public class AxisDiffereceData extends SugarRecord {
     private float y;
     private float z;
     private int label = Label.STANDING;
+    private int samplePeriod;
 
     private static long lastLoggedId = 0;
 
 
-    private void logToMongo() {
+    private void logToRemote() {
         Log.i("AxisDiffereceData","Logged to mongo");
         MongoDBUtils.getInstance().logToDB(this);
     }
     public AxisDiffereceData(){}
 
-    public AxisDiffereceData(float x, float y, float z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    public AxisDiffereceData(float x, float y, float z, int label) {
+    public AxisDiffereceData(float x, float y, float z, int label,int samplePeriod) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.label = label;
+        this.samplePeriod = samplePeriod;
     }
 
     public float getX() {
@@ -73,12 +66,21 @@ public class AxisDiffereceData extends SugarRecord {
         this.label = label;
     }
 
+    public int getSamplePeriod() {
+        return samplePeriod;
+    }
+
+    public void setSamplePeriod(int samplePeriod) {
+        this.samplePeriod = samplePeriod;
+    }
+
     @Override
     public String toString() {
-        return "AxisDiffereceData{" +
+        return "AxisDiffereceData{ " +
                 "x=" + x +
                 ", y=" + y +
                 ", z=" + z +
+                ", sampePerid=" + samplePeriod +
                 ", label=" + label +
                 '}';
     }
@@ -90,7 +92,6 @@ public class AxisDiffereceData extends SugarRecord {
 
     public static void deleteAllData(){
         SugarRecord.deleteAll(AxisDiffereceData.class);
-        lastLoggedId = -1;
     }
 
     public static void syncRemoteDatabase(){
@@ -106,10 +107,15 @@ public class AxisDiffereceData extends SugarRecord {
                         ,AxisDiffereceData.class);
         Log.i("AxisDifferenceData", "list size" + list.size());
         for (AxisDiffereceData axe: list) {
-            axe.logToMongo();
+            axe.logToRemote();
             lastLoggedId = axe.getId();
         }
     }
+
+    public static void deleteAllRemoteData() {
+        MongoDBUtils.getInstance().deleteAll();
+    }
+
     public static class Label{
         public static final  int STANDING = 0;
         public static final  int WALKING = 1;
